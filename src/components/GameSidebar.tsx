@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Building2, Wrench, FlaskConical, Rocket, Shield, Globe2, Plane,
 } from "lucide-react";
+import { PlanetPanel } from "./PlanetPanel";
 
 const navItems = [
   { to: "/", label: "Visão Geral", icon: LayoutDashboard },
@@ -30,6 +31,8 @@ export function GameSidebar() {
           </div>
         </div>
       </div>
+
+      <PlanetPanel />
 
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {navItems.map(({ to, label, icon: Icon }) => {
