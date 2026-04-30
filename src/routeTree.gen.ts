@@ -9,8 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShipyardRouteImport } from './routes/shipyard'
+import { Route as ResearchRouteImport } from './routes/research'
+import { Route as GalaxyRouteImport } from './routes/galaxy'
+import { Route as FleetRouteImport } from './routes/fleet'
+import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as DefenseRouteImport } from './routes/defense'
+import { Route as BuildingsRouteImport } from './routes/buildings'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ShipyardRoute = ShipyardRouteImport.update({
+  id: '/shipyard',
+  path: '/shipyard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalaxyRoute = GalaxyRouteImport.update({
+  id: '/galaxy',
+  path: '/galaxy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FleetRoute = FleetRouteImport.update({
+  id: '/fleet',
+  path: '/fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacilitiesRoute = FacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DefenseRoute = DefenseRouteImport.update({
+  id: '/defense',
+  path: '/defense',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildingsRoute = BuildingsRouteImport.update({
+  id: '/buildings',
+  path: '/buildings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +61,130 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/buildings': typeof BuildingsRoute
+  '/defense': typeof DefenseRoute
+  '/facilities': typeof FacilitiesRoute
+  '/fleet': typeof FleetRoute
+  '/galaxy': typeof GalaxyRoute
+  '/research': typeof ResearchRoute
+  '/shipyard': typeof ShipyardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/buildings': typeof BuildingsRoute
+  '/defense': typeof DefenseRoute
+  '/facilities': typeof FacilitiesRoute
+  '/fleet': typeof FleetRoute
+  '/galaxy': typeof GalaxyRoute
+  '/research': typeof ResearchRoute
+  '/shipyard': typeof ShipyardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/buildings': typeof BuildingsRoute
+  '/defense': typeof DefenseRoute
+  '/facilities': typeof FacilitiesRoute
+  '/fleet': typeof FleetRoute
+  '/galaxy': typeof GalaxyRoute
+  '/research': typeof ResearchRoute
+  '/shipyard': typeof ShipyardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/buildings'
+    | '/defense'
+    | '/facilities'
+    | '/fleet'
+    | '/galaxy'
+    | '/research'
+    | '/shipyard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/buildings'
+    | '/defense'
+    | '/facilities'
+    | '/fleet'
+    | '/galaxy'
+    | '/research'
+    | '/shipyard'
+  id:
+    | '__root__'
+    | '/'
+    | '/buildings'
+    | '/defense'
+    | '/facilities'
+    | '/fleet'
+    | '/galaxy'
+    | '/research'
+    | '/shipyard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuildingsRoute: typeof BuildingsRoute
+  DefenseRoute: typeof DefenseRoute
+  FacilitiesRoute: typeof FacilitiesRoute
+  FleetRoute: typeof FleetRoute
+  GalaxyRoute: typeof GalaxyRoute
+  ResearchRoute: typeof ResearchRoute
+  ShipyardRoute: typeof ShipyardRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shipyard': {
+      id: '/shipyard'
+      path: '/shipyard'
+      fullPath: '/shipyard'
+      preLoaderRoute: typeof ShipyardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galaxy': {
+      id: '/galaxy'
+      path: '/galaxy'
+      fullPath: '/galaxy'
+      preLoaderRoute: typeof GalaxyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fleet': {
+      id: '/fleet'
+      path: '/fleet'
+      fullPath: '/fleet'
+      preLoaderRoute: typeof FleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facilities': {
+      id: '/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/defense': {
+      id: '/defense'
+      path: '/defense'
+      fullPath: '/defense'
+      preLoaderRoute: typeof DefenseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buildings': {
+      id: '/buildings'
+      path: '/buildings'
+      fullPath: '/buildings'
+      preLoaderRoute: typeof BuildingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +197,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuildingsRoute: BuildingsRoute,
+  DefenseRoute: DefenseRoute,
+  FacilitiesRoute: FacilitiesRoute,
+  FleetRoute: FleetRoute,
+  GalaxyRoute: GalaxyRoute,
+  ResearchRoute: ResearchRoute,
+  ShipyardRoute: ShipyardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
