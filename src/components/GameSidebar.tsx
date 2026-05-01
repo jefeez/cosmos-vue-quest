@@ -1,8 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Building2, Wrench, FlaskConical, Rocket, Shield, Globe2, Plane,
+  LayoutDashboard, Building2, Wrench, FlaskConical, Rocket, Shield, Globe2, Plane, Moon,
 } from "lucide-react";
 import { PlanetPanel } from "./PlanetPanel";
+import { useLocation } from "@/lib/location-store";
 
 const navItems = [
   { to: "/", label: "Visão Geral", icon: LayoutDashboard },
@@ -11,12 +12,14 @@ const navItems = [
   { to: "/research", label: "Pesquisas", icon: FlaskConical },
   { to: "/shipyard", label: "Hangar", icon: Rocket },
   { to: "/defense", label: "Defesa", icon: Shield },
+  { to: "/moon", label: "Lua", icon: Moon },
   { to: "/galaxy", label: "Galáxia", icon: Globe2 },
   { to: "/fleet", label: "Frotas", icon: Plane },
 ] as const;
 
 export function GameSidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { planet } = useLocation();
 
   return (
     <aside className="w-60 shrink-0 bg-surface/60 border-r border-border flex flex-col">
@@ -37,6 +40,7 @@ export function GameSidebar() {
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {navItems.map(({ to, label, icon: Icon }) => {
           const active = path === to;
+          const dimmed = to === "/moon" && !planet.hasMoon;
           return (
             <Link
               key={to}
@@ -45,11 +49,14 @@ export function GameSidebar() {
                 active
                   ? "bg-primary/15 text-primary border border-primary/30"
                   : "text-muted-foreground hover:bg-surface-elevated hover:text-foreground border border-transparent"
-              }`}
+              } ${dimmed ? "opacity-40" : ""}`}
             >
               {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r" />}
               <Icon className="w-4 h-4 shrink-0" strokeWidth={active ? 2.4 : 1.8} />
               <span className="font-display tracking-wider text-xs uppercase">{label}</span>
+              {to === "/moon" && !planet.hasMoon && (
+                <span className="ml-auto text-[8px] font-mono uppercase text-muted-foreground/60">N/D</span>
+              )}
             </Link>
           );
         })}
