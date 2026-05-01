@@ -3,6 +3,7 @@ import { Moon, Radar, Sparkles, ArrowLeft, Telescope, Activity, Pickaxe, Gem, Dr
 import { PageHeader } from "@/components/PageHeader";
 import { BuildCard } from "@/components/BuildCard";
 import { UnitCard } from "@/components/UnitCard";
+import { MoonFleetCard } from "@/components/MoonFleetCard";
 import { moonBuildings, moonShips, moonDefenses, moonStats } from "@/lib/moon-data";
 import { useLocation, locationStore } from "@/lib/location-store";
 import { useEffect, useState } from "react";
@@ -85,7 +86,7 @@ function MoonPage() {
             <EmptyState icon={Send} title="Nenhuma nave estacionada" desc="Envie uma frota para sua lua para guarnecê-la." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {moonShips.map((s) => <UnitCard key={s.id} item={s} />)}
+              {moonShips.map((s) => <MoonFleetCard key={s.id} item={s} />)}
             </div>
           )}
         </>
