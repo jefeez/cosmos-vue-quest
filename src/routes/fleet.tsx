@@ -1,136 +1,250 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plane, Send, RotateCcw, Shield, Crosshair, Eye } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Plane, Send, RotateCcw, Shield, Crosshair, Eye, Compass, Bomb,
+  Anchor, Sparkles, Plus, X, ChevronRight, History,
+} from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { FleetDispatchDialog } from "@/components/FleetDispatchDialog";
+import { useFleet, fleetStore, formatCountdown, missionProgress, type Mission, type MissionType } from "@/lib/fleet-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/fleet")({
   component: FleetPage,
   head: () => ({ meta: [{ title: "Frotas — OGAME" }] }),
 });
 
-interface Mission {
-  id: string;
-  type: "Ataque" | "Transporte" | "Espionagem" | "Colonizar" | "Reciclar" | "Estacionar";
-  origin: string;
-  target: string;
-  ships: number;
-  arrival: string;
-  progress: number;
-  returning?: boolean;
-}
-
-const missions: Mission[] = [
-  { id: "m1", type: "Ataque", origin: "[1:147:8]", target: "[2:241:11]", ships: 156, arrival: "00:42:18", progress: 64 },
-  { id: "m2", type: "Espionagem", origin: "[1:147:8]", target: "[1:147:9]", ships: 8, arrival: "01:15:02", progress: 32 },
-  { id: "m3", type: "Transporte", origin: "[1:147:8]", target: "[1:147:6]", ships: 24, arrival: "02:08:45", progress: 18, returning: true },
-  { id: "m4", type: "Reciclar", origin: "[1:147:8]", target: "[1:147:5]", ships: 12, arrival: "00:18:33", progress: 78 },
-];
-
-const typeIcon = {
-  Ataque: Crosshair, Transporte: Send, Espionagem: Eye, Colonizar: Plane, Reciclar: RotateCcw, Estacionar: Shield,
+const typeIcon: Record<MissionType, typeof Plane> = {
+  Ataque: Crosshair, Transporte: Send, Espionagem: Eye, Colonizar: Compass,
+  Reciclar: RotateCcw, Estacionar: Anchor, Expedição: Sparkles, Destruir: Bomb,
 };
-const typeColor = {
+const typeColor: Record<MissionType, string> = {
   Ataque: "destructive", Transporte: "primary", Espionagem: "accent",
   Colonizar: "crystal", Reciclar: "warning", Estacionar: "muted-foreground",
+  Expedição: "deuterium", Destruir: "destructive",
 };
 
 function FleetPage() {
+  const { missions } = useFleet();
+  const [tab, setTab] = useState<"active" | "returning" | "stationed" | "history">("active");
+  const [dispatchOpen, setDispatchOpen] = useState(false);
+  const [, force] = useState(0);
+
+  // tick every second for countdowns
+  useEffect(() => {
+    const t = setInterval(() => force((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const active = missions.filter((m) => m.status === "outbound");
+  const returning = missions.filter((m) => m.status === "returning" || m.status === "recalled");
+  const stationed = missions.filter((m) => m.status === "holding");
+  const history = missions.filter((m) => m.status === "completed");
+
+  const visible: Mission[] = { active, returning, stationed, history }[tab];
+
+  const totalShips = missions.reduce((s, m) => s + m.ships.reduce((a, b) => a + b.count, 0), 0);
+  const totalDeut = missions.reduce((s, m) => s + m.fuel, 0);
+
+  const fmt = (n: number) => n.toLocaleString("pt-BR");
+
   return (
     <div className="max-w-7xl mx-auto">
-      <PageHeader icon={Plane} title="Frotas" subtitle="Movimentos ativos da armada" code={`${missions.length} ATIVAS`} />
+      <PageHeader icon={Plane} title="Frotas" subtitle="Comando central da armada" code={`${active.length} ATIVAS`} />
 
-      {/* Slots */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <div className="panel rounded-md p-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Slots de Frota</div>
-          <div className="text-2xl font-display font-bold mt-1 tabular-nums text-primary">4 / 9</div>
-        </div>
-        <div className="panel rounded-md p-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Expedições</div>
-          <div className="text-2xl font-display font-bold mt-1 tabular-nums text-accent">1 / 3</div>
-        </div>
-        <div className="panel rounded-md p-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Naves Disponíveis</div>
-          <div className="text-2xl font-display font-bold mt-1 tabular-nums text-crystal">412</div>
-        </div>
-        <div className="panel rounded-md p-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Deutério Reservado</div>
-          <div className="text-2xl font-display font-bold mt-1 tabular-nums text-deuterium">14.2k</div>
-        </div>
+      {/* KPI strip */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+        <Kpi label="Slots de Frota" value={`${active.length + returning.length + stationed.length} / 9`} tone="primary" />
+        <Kpi label="Expedições" value={`${missions.filter(m => m.type === "Expedição").length} / 3`} tone="accent" />
+        <Kpi label="Naves em voo" value={fmt(active.reduce((s, m) => s + m.ships.reduce((a, b) => a + b.count, 0), 0))} tone="crystal" />
+        <Kpi label="Frota total" value={fmt(totalShips)} tone="foreground" />
+        <Kpi label="Deut. reservado" value={fmt(totalDeut)} tone="deuterium" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Missions */}
-        <div className="panel rounded-md p-5 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-sm uppercase tracking-widest">Movimentos Ativos</h2>
-            <button className="text-[10px] font-mono uppercase tracking-wider text-primary hover:text-accent">+ Nova missão</button>
+        {/* Missions panel */}
+        <div className="panel rounded-md lg:col-span-2 flex flex-col">
+          {/* Tabs */}
+          <div className="flex items-center justify-between px-5 pt-4">
+            <div className="flex gap-1">
+              {([
+                ["active", "Ativas", active.length],
+                ["returning", "Retornando", returning.length],
+                ["stationed", "Estacionadas", stationed.length],
+                ["history", "Histórico", history.length],
+              ] as const).map(([k, label, n]) => (
+                <button key={k} onClick={() => setTab(k)}
+                  className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded ${
+                    tab === k ? "bg-primary/15 text-primary border border-primary/40" : "text-muted-foreground hover:text-foreground border border-transparent"
+                  }`}>
+                  {label} <span className="opacity-60">({n})</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setDispatchOpen(true)}
+              className="px-3 py-1.5 bg-primary text-primary-foreground rounded font-display uppercase tracking-wider text-[10px] font-semibold hover:shadow-[0_0_16px_-4px_var(--primary)] flex items-center gap-1"
+            >
+              <Plus className="w-3 h-3" /> Nova missão
+            </button>
           </div>
-          <div className="space-y-3">
-            {missions.map((m) => {
-              const Icon = typeIcon[m.type];
-              return (
-                <div key={m.id} className="bg-surface-elevated/40 rounded p-3 border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-9 h-9 rounded bg-surface border border-border flex items-center justify-center text-${typeColor[m.type]}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`font-display text-sm uppercase tracking-wider text-${typeColor[m.type]}`}>{m.type}</span>
-                        {m.returning && <span className="text-[9px] font-mono uppercase bg-warning/20 text-warning px-1.5 py-0.5 rounded">retorno</span>}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground">
-                        {m.origin} → <span className="text-foreground">{m.target}</span> · {m.ships} naves
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-mono text-sm tabular-nums text-foreground">{m.arrival}</div>
-                      <div className="text-[9px] font-mono uppercase text-muted-foreground">chegada</div>
-                    </div>
-                  </div>
-                  <div className="h-1.5 bg-background rounded-full overflow-hidden">
-                    <div className={`h-full bg-${typeColor[m.type]} shimmer`} style={{ width: `${m.progress}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+
+          <div className="p-5 space-y-3">
+            {visible.length === 0 && (
+              <div className="text-center py-12 text-muted-foreground font-mono text-xs uppercase tracking-wider">
+                <History className="w-6 h-6 mx-auto mb-2 opacity-40" />
+                Nenhuma missão nesta categoria.
+              </div>
+            )}
+            {visible.map((m) => <MissionRow key={m.id} mission={m} />)}
           </div>
         </div>
 
-        {/* Send fleet */}
-        <div className="panel rounded-md p-5">
-          <h2 className="font-display text-sm uppercase tracking-widest mb-4">Enviar Frota</h2>
-          <div className="space-y-3">
-            <div>
-              <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Coordenadas alvo</label>
-              <div className="grid grid-cols-3 gap-1.5 mt-1">
-                <input defaultValue="1" className="bg-surface-elevated border border-border rounded px-2 py-1.5 text-sm font-mono text-center focus:outline-none focus:border-primary" />
-                <input defaultValue="147" className="bg-surface-elevated border border-border rounded px-2 py-1.5 text-sm font-mono text-center focus:outline-none focus:border-primary" />
-                <input defaultValue="9" className="bg-surface-elevated border border-border rounded px-2 py-1.5 text-sm font-mono text-center focus:outline-none focus:border-primary" />
-              </div>
+        {/* Quick send */}
+        <div className="panel rounded-md p-5 h-fit space-y-4">
+          <h2 className="font-display text-sm uppercase tracking-widest">Lançamento Rápido</h2>
+          <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">
+            Envie frotas com configuração detalhada — naves, destino, missão, velocidade e carga.
+          </p>
+          <button
+            onClick={() => setDispatchOpen(true)}
+            className="w-full py-2.5 bg-primary text-primary-foreground rounded font-display uppercase tracking-wider text-sm font-semibold hover:shadow-[0_0_16px_-4px_var(--primary)] flex items-center justify-center gap-2"
+          >
+            <Send className="w-4 h-4" /> Abrir assistente
+          </button>
+
+          <div className="border-t border-border pt-4">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Atalhos</div>
+            <div className="space-y-1.5">
+              {[
+                { l: "Espionar último alvo", icon: Eye },
+                { l: "Reciclar destroços", icon: RotateCcw },
+                { l: "Reforçar colônia", icon: Shield },
+              ].map((s) => {
+                const Icon = s.icon;
+                return (
+                  <button key={s.l} onClick={() => setDispatchOpen(true)}
+                    className="w-full flex items-center justify-between px-3 py-2 bg-surface-elevated/40 border border-border rounded text-xs hover:border-primary group">
+                    <span className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground">
+                      <Icon className="w-3 h-3" /> {s.l}
+                    </span>
+                    <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                );
+              })}
             </div>
-            <div>
-              <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Tipo de missão</label>
-              <select className="w-full mt-1 bg-surface-elevated border border-border rounded px-2 py-2 text-sm font-mono focus:outline-none focus:border-primary">
-                <option>Ataque</option>
-                <option>Espionagem</option>
-                <option>Transporte</option>
-                <option>Colonizar</option>
-                <option>Reciclar</option>
-                <option>Estacionar</option>
-              </select>
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Tipos de missão</div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {(Object.keys(typeIcon) as MissionType[]).map((t) => {
+                const Icon = typeIcon[t];
+                return (
+                  <div key={t} className="flex items-center gap-1.5 text-[10px] font-mono uppercase">
+                    <Icon className={`w-3 h-3 text-${typeColor[t]}`} />
+                    <span className="text-muted-foreground">{t}</span>
+                  </div>
+                );
+              })}
             </div>
-            <div>
-              <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Velocidade</label>
-              <input type="range" min="10" max="100" step="10" defaultValue="100" className="w-full mt-1 accent-primary" />
-              <div className="flex justify-between text-[9px] font-mono text-muted-foreground"><span>10%</span><span>100%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <FleetDispatchDialog open={dispatchOpen} onClose={() => setDispatchOpen(false)} />
+    </div>
+  );
+}
+
+function MissionRow({ mission }: { mission: Mission }) {
+  const Icon = typeIcon[mission.type];
+  const color = typeColor[mission.type];
+  const progress = missionProgress(mission);
+  const eta = mission.status === "returning" || mission.status === "recalled"
+    ? formatCountdown(mission.returnAt)
+    : formatCountdown(mission.arrivalAt);
+  const totalShips = mission.ships.reduce((a, b) => a + b.count, 0);
+  const totalCargo = mission.cargo.metal + mission.cargo.crystal + mission.cargo.deuterium;
+  const fmt = (n: number) => n.toLocaleString("pt-BR");
+
+  const canRecall = mission.status === "outbound" || mission.status === "holding";
+
+  const handleRecall = () => {
+    fleetStore.recall(mission.id);
+    toast.warning(`Frota retornando — ${mission.type}`, { description: `Origem ${mission.origin}` });
+  };
+
+  return (
+    <div className="bg-surface-elevated/40 rounded border border-border overflow-hidden">
+      <div className="p-3">
+        <div className="flex items-center gap-3 mb-2">
+          <div className={`w-9 h-9 rounded bg-surface border border-border flex items-center justify-center text-${color}`}>
+            <Icon className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`font-display text-sm uppercase tracking-wider text-${color}`}>{mission.type}</span>
+              {mission.status === "returning" && <Tag color="warning">retorno</Tag>}
+              {mission.status === "recalled" && <Tag color="destructive">recall</Tag>}
+              {mission.status === "holding" && <Tag color="accent">estacionada</Tag>}
             </div>
-            <button className="w-full py-2.5 bg-primary text-primary-foreground rounded font-display uppercase tracking-wider text-sm font-semibold hover:shadow-[0_0_16px_-4px_var(--primary)]">
-              Lançar Frota →
+            <div className="text-[10px] font-mono text-muted-foreground truncate">
+              {mission.origin} → <span className="text-foreground">{mission.target}</span> · {fmt(totalShips)} naves
+              {totalCargo > 0 && <> · {fmt(totalCargo)} t</>}
+              {mission.fuel > 0 && <> · <span className="text-deuterium">{fmt(mission.fuel)} D</span></>}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="font-mono text-sm tabular-nums text-foreground">{eta}</div>
+            <div className="text-[9px] font-mono uppercase text-muted-foreground">
+              {mission.status === "returning" || mission.status === "recalled" ? "retorno" : "chegada"}
+            </div>
+          </div>
+        </div>
+
+        <div className="h-1.5 bg-background rounded-full overflow-hidden">
+          <div className={`h-full bg-${color} shimmer`} style={{ width: `${mission.status === "returning" ? 100 - progress : progress}%` }} />
+        </div>
+
+        {/* Composition */}
+        <div className="flex items-center justify-between mt-2.5">
+          <div className="flex flex-wrap gap-1.5">
+            {mission.ships.slice(0, 4).map((s) => (
+              <span key={s.id} className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-surface border border-border text-muted-foreground">
+                {s.name} <span className="text-foreground">{s.count}</span>
+              </span>
+            ))}
+            {mission.ships.length > 4 && (
+              <span className="text-[9px] font-mono uppercase text-muted-foreground">+{mission.ships.length - 4}</span>
+            )}
+          </div>
+          <div className="flex gap-1">
+            {canRecall && (
+              <button onClick={handleRecall}
+                className="text-[9px] font-mono uppercase px-2 py-1 rounded border border-border hover:border-warning hover:text-warning flex items-center gap-1">
+                <RotateCcw className="w-3 h-3" /> Recall
+              </button>
+            )}
+            <button onClick={() => fleetStore.remove(mission.id)}
+              className="text-[9px] font-mono uppercase px-2 py-1 rounded border border-border hover:border-destructive hover:text-destructive flex items-center gap-1">
+              <X className="w-3 h-3" />
             </button>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+function Kpi({ label, value, tone }: { label: string; value: string; tone: string }) {
+  return (
+    <div className="panel rounded-md p-4">
+      <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className={`text-2xl font-display font-bold mt-1 tabular-nums text-${tone}`}>{value}</div>
+    </div>
+  );
+}
+function Tag({ children, color }: { children: React.ReactNode; color: string }) {
+  return <span className={`text-[9px] font-mono uppercase bg-${color}/20 text-${color} px-1.5 py-0.5 rounded`}>{children}</span>;
 }
