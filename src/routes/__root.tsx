@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { GameSidebar } from "@/components/GameSidebar";
 import { ResourceBar } from "@/components/ResourceBar";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -68,6 +69,7 @@ function RootComponent() {
           <Outlet />
         </main>
       </div>
+      <Toaster position="top-right" theme="dark" />
     </div>
   );
 }
