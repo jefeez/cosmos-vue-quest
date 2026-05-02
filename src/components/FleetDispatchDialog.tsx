@@ -9,15 +9,16 @@ interface Props {
   onClose: () => void;
   origin?: string;
   defaultTarget?: { g: number; s: number; p: number };
+  defaultMission?: MissionType;
 }
 
 type Step = 1 | 2 | 3 | 4;
 
-export function FleetDispatchDialog({ open, onClose, origin = "[1:147:8]", defaultTarget }: Props) {
+export function FleetDispatchDialog({ open, onClose, origin = "[1:147:8]", defaultTarget, defaultMission }: Props) {
   const [step, setStep] = useState<Step>(1);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [target, setTarget] = useState(defaultTarget ?? { g: 1, s: 147, p: 9 });
-  const [mission, setMission] = useState<MissionType>("Ataque");
+  const [mission, setMission] = useState<MissionType>(defaultMission ?? "Ataque");
   const [speed, setSpeed] = useState(100);
   const [cargo, setCargo] = useState({ metal: 0, crystal: 0, deuterium: 0 });
 
