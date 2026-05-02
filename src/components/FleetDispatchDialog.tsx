@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Plane, X, Rocket, Fuel, Package, AlertTriangle } from "lucide-react";
 import { fleetShips } from "@/lib/fleet-data";
 import { fleetStore, type MissionType } from "@/lib/fleet-store";
@@ -21,6 +21,13 @@ export function FleetDispatchDialog({ open, onClose, origin = "[1:147:8]", defau
   const [mission, setMission] = useState<MissionType>(defaultMission ?? "Ataque");
   const [speed, setSpeed] = useState(100);
   const [cargo, setCargo] = useState({ metal: 0, crystal: 0, deuterium: 0 });
+
+  useEffect(() => {
+    if (open) {
+      if (defaultTarget) setTarget(defaultTarget);
+      if (defaultMission) setMission(defaultMission);
+    }
+  }, [open, defaultTarget, defaultMission]);
 
   const totalShips = Object.values(selected).reduce((a, b) => a + b, 0);
   const selectedDefs = fleetShips.filter((s) => (selected[s.id] ?? 0) > 0);
