@@ -32,6 +32,7 @@ function GalaxyPage() {
   const [dispatchTarget, setDispatchTarget] = useState<{ g: number; s: number; p: number }>();
   const [dispatchMission, setDispatchMission] = useState<MissionType>("Ataque");
   const [favorites, setFavorites] = useState<Set<string>>(new Set(["1:147:9"]));
+  const [view, setView] = useState<"orbit" | "list">("orbit");
 
   const slots = useMemo(() => generateSystem(galaxy, system), [galaxy, system]);
 
