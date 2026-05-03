@@ -1,5 +1,7 @@
 export type PlayerStatus = "active" | "inactive" | "vacation" | "banned" | "noob" | "strong" | "self";
 
+export type PlanetType = "rocky" | "lava" | "ocean" | "ice" | "gas" | "desert" | "toxic" | "barren";
+
 export interface DebrisField {
   metal: number;
   crystal: number;
@@ -15,6 +17,9 @@ export interface PlanetSlot {
   moon?: { name: string; size: number };
   debris?: DebrisField;
   activity?: number; // minutes since last activity, 0 = online (*), 15 = (15)
+  type?: PlanetType;
+  size?: number; // 8..18 visual radius
+  hue?: number; // 0..360 secondary
 }
 
 // Deterministic pseudo-random
@@ -36,6 +41,17 @@ const planetSuffixes = ["Prime", "IX", "Beta", "Forja", "Cinder", "Vesper", "Atr
 
 const SELF = { player: "Krix (você)", alliance: "RUST", rank: 247 };
 
+const TYPES: PlanetType[] = ["rocky", "lava", "ocean", "ice", "gas", "desert", "toxic", "barren"];
+
+function typeForPos(pos: number, r: number): PlanetType {
+  // inner = hot, outer = cold/gas
+  if (pos <= 2) return r < 0.6 ? "lava" : "desert";
+  if (pos <= 4) return r < 0.5 ? "rocky" : "desert";
+  if (pos <= 8) return r < 0.4 ? "ocean" : r < 0.7 ? "rocky" : "toxic";
+  if (pos <= 11) return r < 0.6 ? "barren" : "ice";
+  return r < 0.7 ? "gas" : "ice";
+}
+
 export function generateSystem(galaxy: number, system: number): PlanetSlot[] {
   const rand = seededRand(galaxy * 1000 + system);
   const slots: PlanetSlot[] = [];
@@ -52,6 +68,9 @@ export function generateSystem(galaxy: number, system: number): PlanetSlot[] {
         status: "self",
         moon: { name: "Selene", size: 8420 },
         activity: 0,
+        type: "ocean",
+        size: 16,
+        hue: 200,
       });
       continue;
     }
@@ -83,6 +102,9 @@ export function generateSystem(galaxy: number, system: number): PlanetSlot[] {
       rank,
       status,
       activity: rand() < 0.3 ? 0 : Math.floor(rand() * 60),
+      type: typeForPos(i, rand()),
+      size: 9 + Math.floor(rand() * 9),
+      hue: Math.floor(rand() * 360),
     };
 
     if (rand() < 0.3) {
@@ -104,6 +126,17 @@ export function generateSystem(galaxy: number, system: number): PlanetSlot[] {
 
   return slots;
 }
+
+export const planetTypeMeta: Record<PlanetType, { label: string; gradient: string; ring: string; glow: string }> = {
+  rocky:  { label: "Rochoso",  gradient: "radial-gradient(circle at 30% 30%, oklch(0.78 0.05 60), oklch(0.42 0.04 50) 60%, oklch(0.22 0.02 40))", ring: "oklch(0.55 0.05 60)", glow: "oklch(0.7 0.06 60 / 0.5)" },
+  lava:   { label: "Vulcânico", gradient: "radial-gradient(circle at 30% 30%, oklch(0.85 0.2 40), oklch(0.5 0.22 25) 55%, oklch(0.22 0.1 20))", ring: "oklch(0.65 0.2 30)", glow: "oklch(0.75 0.22 30 / 0.7)" },
+  ocean:  { label: "Oceânico",  gradient: "radial-gradient(circle at 30% 30%, oklch(0.85 0.12 220), oklch(0.5 0.15 225) 55%, oklch(0.22 0.08 230))", ring: "oklch(0.6 0.15 220)", glow: "oklch(0.75 0.15 220 / 0.7)" },
+  ice:    { label: "Gelado",    gradient: "radial-gradient(circle at 30% 30%, oklch(0.95 0.04 220), oklch(0.7 0.06 220) 55%, oklch(0.4 0.04 230))", ring: "oklch(0.8 0.06 220)", glow: "oklch(0.9 0.06 220 / 0.6)" },
+  gas:    { label: "Gasoso",    gradient: "radial-gradient(circle at 30% 30%, oklch(0.85 0.12 80), oklch(0.55 0.14 50) 55%, oklch(0.3 0.1 40))", ring: "oklch(0.7 0.14 60)", glow: "oklch(0.8 0.14 60 / 0.6)" },
+  desert: { label: "Desértico", gradient: "radial-gradient(circle at 30% 30%, oklch(0.88 0.12 80), oklch(0.6 0.14 70) 55%, oklch(0.32 0.08 60))", ring: "oklch(0.7 0.14 75)", glow: "oklch(0.82 0.14 75 / 0.6)" },
+  toxic:  { label: "Tóxico",    gradient: "radial-gradient(circle at 30% 30%, oklch(0.85 0.18 140), oklch(0.5 0.2 145) 55%, oklch(0.25 0.12 150))", ring: "oklch(0.65 0.2 145)", glow: "oklch(0.75 0.2 145 / 0.6)" },
+  barren: { label: "Estéril",   gradient: "radial-gradient(circle at 30% 30%, oklch(0.7 0.02 60), oklch(0.4 0.015 60) 55%, oklch(0.2 0.01 60))", ring: "oklch(0.5 0.02 60)", glow: "oklch(0.6 0.02 60 / 0.4)" },
+};
 
 export const statusMeta: Record<PlayerStatus, { label: string; color: string; tone: string }> = {
   active: { label: "Ativo", color: "text-foreground", tone: "bg-foreground/60" },

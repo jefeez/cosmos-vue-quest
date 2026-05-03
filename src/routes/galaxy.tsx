@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Globe2, Search, Crosshair, Eye, Send, ChevronLeft, ChevronRight, Star, Recycle, Filter, Moon } from "lucide-react";
+import { Globe2, Search, Crosshair, Eye, Send, ChevronLeft, ChevronRight, Star, Recycle, Filter, Moon, Orbit, List } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { useMemo, useState } from "react";
 import { generateSystem, statusMeta, type PlanetSlot, type PlayerStatus } from "@/lib/galaxy-data";
 import { GalaxySlotDetail } from "@/components/GalaxySlotDetail";
 import { FleetDispatchDialog } from "@/components/FleetDispatchDialog";
+import { SystemOrbitView } from "@/components/SystemOrbitView";
 import type { MissionType } from "@/lib/fleet-store";
 
 export const Route = createFileRoute("/galaxy")({
@@ -31,6 +32,7 @@ function GalaxyPage() {
   const [dispatchTarget, setDispatchTarget] = useState<{ g: number; s: number; p: number }>();
   const [dispatchMission, setDispatchMission] = useState<MissionType>("Ataque");
   const [favorites, setFavorites] = useState<Set<string>>(new Set(["1:147:9"]));
+  const [view, setView] = useState<"orbit" | "list">("orbit");
 
   const slots = useMemo(() => generateSystem(galaxy, system), [galaxy, system]);
 
@@ -127,10 +129,38 @@ function GalaxyPage() {
             {f.label}
           </button>
         ))}
+        <div className="ml-auto inline-flex rounded border border-border bg-surface-elevated overflow-hidden">
+          <button
+            onClick={() => setView("orbit")}
+            className={`px-2.5 py-1 text-[10px] font-display uppercase tracking-widest flex items-center gap-1.5 ${
+              view === "orbit" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Orbit className="w-3 h-3" /> Órbita
+          </button>
+          <button
+            onClick={() => setView("list")}
+            className={`px-2.5 py-1 text-[10px] font-display uppercase tracking-widest flex items-center gap-1.5 border-l border-border ${
+              view === "list" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <List className="w-3 h-3" /> Lista
+          </button>
+        </div>
       </div>
 
-      {/* System grid */}
-      <div className="panel rounded-md overflow-hidden">
+      {view === "orbit" && (
+        <SystemOrbitView
+          slots={slots}
+          galaxy={galaxy}
+          system={system}
+          favorites={favorites}
+          onSelect={(s) => setSelected(s)}
+        />
+      )}
+
+      {view === "list" && (
+        <div className="panel rounded-md overflow-hidden">
         <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-surface-elevated/60 border-b border-border text-[10px] font-display uppercase tracking-widest text-muted-foreground">
           <div className="col-span-1">Pos</div>
           <div className="col-span-3">Planeta</div>
@@ -220,7 +250,8 @@ function GalaxyPage() {
             Nenhum slot corresponde ao filtro
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="mt-4 panel rounded-md p-3 flex flex-wrap gap-4 text-[10px] font-mono text-muted-foreground">
