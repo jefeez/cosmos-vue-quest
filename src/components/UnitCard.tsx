@@ -140,41 +140,43 @@ export function UnitCard({ item, kind = "ship" }: Props) {
             </div>
           </div>
         ) : (
-          <div className="flex gap-1.5">
-            <button
-              onClick={() => setQty(Math.max(0, qty - 10))}
-              disabled={locked}
-              className="px-2 bg-surface-elevated border border-border rounded text-muted-foreground hover:text-foreground disabled:opacity-50"
-            >
-              <Minus className="w-3 h-3" />
-            </button>
-            <input
-              type="number"
-              min={0}
-              disabled={locked}
-              value={qty || ""}
-              onChange={(e) => setQty(Math.max(0, +e.target.value))}
-              placeholder="Qtd"
-              className="flex-1 bg-surface-elevated border border-border rounded px-2 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-center tabular-nums disabled:opacity-50"
-            />
-            <button
-              onClick={() => setQty(Math.max(0, qty + 10))}
-              disabled={locked}
-              className="px-2 bg-surface-elevated border border-border rounded text-muted-foreground hover:text-foreground disabled:opacity-50"
-            >
-              <Plus className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => setQty(Number.isFinite(max) ? max : 0)}
-              disabled={locked}
-              className="px-2 bg-surface-elevated border border-border rounded text-[10px] font-display uppercase text-muted-foreground hover:text-foreground disabled:opacity-50"
-            >
-              Max
-            </button>
+          <div className="space-y-1.5">
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setQty(Math.max(0, qty - 10))}
+                disabled={locked}
+                className="px-2 bg-surface-elevated border border-border rounded text-muted-foreground hover:text-foreground disabled:opacity-50"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+              <input
+                type="number"
+                min={0}
+                disabled={locked}
+                value={qty || ""}
+                onChange={(e) => setQty(Math.max(0, +e.target.value))}
+                placeholder="Qtd"
+                className="flex-1 min-w-0 bg-surface-elevated border border-border rounded px-2 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-center tabular-nums disabled:opacity-50"
+              />
+              <button
+                onClick={() => setQty(Math.max(0, qty + 10))}
+                disabled={locked}
+                className="px-2 bg-surface-elevated border border-border rounded text-muted-foreground hover:text-foreground disabled:opacity-50"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => setQty(Number.isFinite(max) ? max : 0)}
+                disabled={locked}
+                className="px-2 bg-surface-elevated border border-border rounded text-[10px] font-display uppercase text-muted-foreground hover:text-foreground disabled:opacity-50"
+              >
+                Max
+              </button>
+            </div>
             <button
               onClick={handleBuild}
               disabled={!canAfford}
-              className={`px-3 h-8 font-display font-semibold uppercase tracking-wider text-[11px] rounded transition-all flex items-center gap-1 ${
+              className={`w-full px-3 h-9 font-display font-semibold uppercase tracking-wider text-[11px] rounded transition-all flex items-center justify-center gap-1.5 ${
                 canAfford
                   ? `${t.dot} text-background hover:opacity-90 shadow-md ${t.glow}`
                   : "bg-surface-elevated text-muted-foreground cursor-not-allowed border border-border"
@@ -183,7 +185,7 @@ export function UnitCard({ item, kind = "ship" }: Props) {
               {locked && <Lock className="w-3 h-3" />}
               {!locked && !canAfford && qty > 0 && <AlertTriangle className="w-3 h-3" />}
               {!locked && canAfford && <Hammer className="w-3 h-3" />}
-              {locked ? "—" : "Construir"}
+              {locked ? "Bloqueado" : "Construir"}
             </button>
           </div>
         )}
