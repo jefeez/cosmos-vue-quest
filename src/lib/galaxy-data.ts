@@ -1,5 +1,7 @@
 export type PlayerStatus = "active" | "inactive" | "vacation" | "banned" | "noob" | "strong" | "self";
 
+export type PlanetType = "rocky" | "lava" | "ocean" | "ice" | "gas" | "desert" | "toxic" | "barren";
+
 export interface DebrisField {
   metal: number;
   crystal: number;
@@ -15,6 +17,9 @@ export interface PlanetSlot {
   moon?: { name: string; size: number };
   debris?: DebrisField;
   activity?: number; // minutes since last activity, 0 = online (*), 15 = (15)
+  type?: PlanetType;
+  size?: number; // 8..18 visual radius
+  hue?: number; // 0..360 secondary
 }
 
 // Deterministic pseudo-random
