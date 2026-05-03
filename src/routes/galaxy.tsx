@@ -160,8 +160,7 @@ function GalaxyPage() {
       )}
 
       {view === "list" && (
-      {/* System grid */}
-      <div className="panel rounded-md overflow-hidden">
+        <div className="panel rounded-md overflow-hidden">
         <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-surface-elevated/60 border-b border-border text-[10px] font-display uppercase tracking-widest text-muted-foreground">
           <div className="col-span-1">Pos</div>
           <div className="col-span-3">Planeta</div>
