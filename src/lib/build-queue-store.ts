@@ -14,31 +14,37 @@ export interface QueueEntry {
   durationMs: number;
 }
 
-let entries: QueueEntry[] = [
-  {
-    id: "seed-1",
-    kind: "building",
-    itemId: "crystal-mine",
-    name: "Mina de Cristal",
-    level: 12,
-    startedAt: Date.now() - 18 * 60_000,
-    durationMs: 60 * 60_000,
-  },
-  {
-    id: "seed-2",
-    kind: "research",
-    itemId: "hyperspace",
-    name: "Tecnologia Hiperespacial",
-    level: 7,
-    startedAt: Date.now() - 35 * 60_000,
-    durationMs: 3 * 60 * 60_000,
-  },
-];
+let entries: QueueEntry[] = [];
 
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
-setInterval(emit, 1000);
+if (typeof window !== "undefined") {
+  // seed mock entries client-side only (avoids SSR hydration drift)
+  entries = [
+    {
+      id: "seed-1",
+      kind: "building",
+      itemId: "crystal-mine",
+      name: "Mina de Cristal",
+      level: 12,
+      startedAt: Date.now() - 18 * 60_000,
+      durationMs: 60 * 60_000,
+    },
+    {
+      id: "seed-2",
+      kind: "research",
+      itemId: "hyperspace",
+      name: "Tecnologia Hiperespacial",
+      level: 7,
+      startedAt: Date.now() - 35 * 60_000,
+      durationMs: 3 * 60 * 60_000,
+    },
+  ];
+  setInterval(emit, 1000);
+}
+
+const serverSnapshot: QueueEntry[] = [];
 
 const parseTimeToMs = (s: string): number => {
   if (s.includes(":")) {
