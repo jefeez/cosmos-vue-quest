@@ -1,8 +1,10 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { GameSidebar } from "@/components/GameSidebar";
 import { ResourceBar } from "@/components/ResourceBar";
 import { Toaster } from "@/components/ui/sonner";
+
+const STANDALONE_ROUTES = ["/login", "/register", "/universes"];
 
 function NotFoundComponent() {
   return (
