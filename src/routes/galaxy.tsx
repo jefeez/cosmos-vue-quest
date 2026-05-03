@@ -129,8 +129,37 @@ function GalaxyPage() {
             {f.label}
           </button>
         ))}
+        <div className="ml-auto inline-flex rounded border border-border bg-surface-elevated overflow-hidden">
+          <button
+            onClick={() => setView("orbit")}
+            className={`px-2.5 py-1 text-[10px] font-display uppercase tracking-widest flex items-center gap-1.5 ${
+              view === "orbit" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Orbit className="w-3 h-3" /> Órbita
+          </button>
+          <button
+            onClick={() => setView("list")}
+            className={`px-2.5 py-1 text-[10px] font-display uppercase tracking-widest flex items-center gap-1.5 border-l border-border ${
+              view === "list" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <List className="w-3 h-3" /> Lista
+          </button>
+        </div>
       </div>
 
+      {view === "orbit" && (
+        <SystemOrbitView
+          slots={slots}
+          galaxy={galaxy}
+          system={system}
+          favorites={favorites}
+          onSelect={(s) => setSelected(s)}
+        />
+      )}
+
+      {view === "list" && (
       {/* System grid */}
       <div className="panel rounded-md overflow-hidden">
         <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-surface-elevated/60 border-b border-border text-[10px] font-display uppercase tracking-widest text-muted-foreground">
