@@ -62,6 +62,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const standalone = STANDALONE_ROUTES.some((p) => path === p || path.startsWith(p + "/"));
+
+  if (standalone) {
+    return (
+      <div className="min-h-screen w-full bg-background text-foreground">
+        <Outlet />
+        <Toaster position="top-right" theme="dark" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex w-full bg-background text-foreground">
       <GameSidebar />
