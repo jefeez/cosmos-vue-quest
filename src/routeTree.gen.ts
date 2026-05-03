@@ -9,9 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UniversesRouteImport } from './routes/universes'
 import { Route as ShipyardRouteImport } from './routes/shipyard'
 import { Route as ResearchRouteImport } from './routes/research'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as MoonRouteImport } from './routes/moon'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as GalaxyRouteImport } from './routes/galaxy'
 import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
@@ -19,6 +22,11 @@ import { Route as DefenseRouteImport } from './routes/defense'
 import { Route as BuildingsRouteImport } from './routes/buildings'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UniversesRoute = UniversesRouteImport.update({
+  id: '/universes',
+  path: '/universes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShipyardRoute = ShipyardRouteImport.update({
   id: '/shipyard',
   path: '/shipyard',
@@ -29,9 +37,19 @@ const ResearchRoute = ResearchRouteImport.update({
   path: '/research',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MoonRoute = MoonRouteImport.update({
   id: '/moon',
   path: '/moon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalaxyRoute = GalaxyRouteImport.update({
@@ -72,9 +90,12 @@ export interface FileRoutesByFullPath {
   '/facilities': typeof FacilitiesRoute
   '/fleet': typeof FleetRoute
   '/galaxy': typeof GalaxyRoute
+  '/login': typeof LoginRoute
   '/moon': typeof MoonRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/shipyard': typeof ShipyardRoute
+  '/universes': typeof UniversesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,9 +104,12 @@ export interface FileRoutesByTo {
   '/facilities': typeof FacilitiesRoute
   '/fleet': typeof FleetRoute
   '/galaxy': typeof GalaxyRoute
+  '/login': typeof LoginRoute
   '/moon': typeof MoonRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/shipyard': typeof ShipyardRoute
+  '/universes': typeof UniversesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,9 +119,12 @@ export interface FileRoutesById {
   '/facilities': typeof FacilitiesRoute
   '/fleet': typeof FleetRoute
   '/galaxy': typeof GalaxyRoute
+  '/login': typeof LoginRoute
   '/moon': typeof MoonRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/shipyard': typeof ShipyardRoute
+  '/universes': typeof UniversesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,9 +135,12 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/fleet'
     | '/galaxy'
+    | '/login'
     | '/moon'
+    | '/register'
     | '/research'
     | '/shipyard'
+    | '/universes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,9 +149,12 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/fleet'
     | '/galaxy'
+    | '/login'
     | '/moon'
+    | '/register'
     | '/research'
     | '/shipyard'
+    | '/universes'
   id:
     | '__root__'
     | '/'
@@ -130,9 +163,12 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/fleet'
     | '/galaxy'
+    | '/login'
     | '/moon'
+    | '/register'
     | '/research'
     | '/shipyard'
+    | '/universes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,13 +178,23 @@ export interface RootRouteChildren {
   FacilitiesRoute: typeof FacilitiesRoute
   FleetRoute: typeof FleetRoute
   GalaxyRoute: typeof GalaxyRoute
+  LoginRoute: typeof LoginRoute
   MoonRoute: typeof MoonRoute
+  RegisterRoute: typeof RegisterRoute
   ResearchRoute: typeof ResearchRoute
   ShipyardRoute: typeof ShipyardRoute
+  UniversesRoute: typeof UniversesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/universes': {
+      id: '/universes'
+      path: '/universes'
+      fullPath: '/universes'
+      preLoaderRoute: typeof UniversesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shipyard': {
       id: '/shipyard'
       path: '/shipyard'
@@ -163,11 +209,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/moon': {
       id: '/moon'
       path: '/moon'
       fullPath: '/moon'
       preLoaderRoute: typeof MoonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/galaxy': {
@@ -222,9 +282,12 @@ const rootRouteChildren: RootRouteChildren = {
   FacilitiesRoute: FacilitiesRoute,
   FleetRoute: FleetRoute,
   GalaxyRoute: GalaxyRoute,
+  LoginRoute: LoginRoute,
   MoonRoute: MoonRoute,
+  RegisterRoute: RegisterRoute,
   ResearchRoute: ResearchRoute,
   ShipyardRoute: ShipyardRoute,
+  UniversesRoute: UniversesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
