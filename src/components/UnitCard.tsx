@@ -140,6 +140,7 @@ export function UnitCard({ item, kind = "ship" }: Props) {
             </div>
           </div>
         ) : (
+          <div className="space-y-1.5">
           <div className="flex gap-1.5">
             <button
               onClick={() => setQty(Math.max(0, qty - 10))}
