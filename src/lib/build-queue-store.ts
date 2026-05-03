@@ -42,7 +42,8 @@ setInterval(emit, 1000);
 
 const parseTimeToMs = (s: string): number => {
   if (s.includes(":")) {
-    const [h, m, sec = "0"] = s.split(":").map(Number);
+    const parts = s.split(":").map(Number);
+    const [h, m, sec = 0] = parts;
     return ((h * 60 + m) * 60 + sec) * 1000;
   }
   const h = /(\d+)h/.exec(s)?.[1] ?? "0";
