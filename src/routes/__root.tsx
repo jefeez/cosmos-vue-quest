@@ -1,8 +1,10 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { GameSidebar } from "@/components/GameSidebar";
 import { ResourceBar } from "@/components/ResourceBar";
 import { Toaster } from "@/components/ui/sonner";
+
+const STANDALONE_ROUTES = ["/login", "/register", "/universes"];
 
 function NotFoundComponent() {
   return (
@@ -60,6 +62,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const standalone = STANDALONE_ROUTES.some((p) => path === p || path.startsWith(p + "/"));
+
+  if (standalone) {
+    return (
+      <div className="min-h-screen w-full bg-background text-foreground">
+        <Outlet />
+        <Toaster position="top-right" theme="dark" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex w-full bg-background text-foreground">
       <GameSidebar />
