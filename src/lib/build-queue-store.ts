@@ -59,6 +59,7 @@ const parseTimeToMs = (s: string): number => {
 
 export const queueStore = {
   get: () => entries,
+  getServer: () => serverSnapshot,
   subscribe: (l: () => void) => { listeners.add(l); return () => { listeners.delete(l); }; },
 
   enqueue(entry: Omit<QueueEntry, "id" | "startedAt">) {
