@@ -106,7 +106,7 @@ export const queueStore = {
 };
 
 export function useQueue() {
-  return useSyncExternalStore(queueStore.subscribe, queueStore.get, queueStore.get);
+  return useSyncExternalStore(queueStore.subscribe, queueStore.get, queueStore.getServer);
 }
 
 export function progressOf(e: QueueEntry) {
