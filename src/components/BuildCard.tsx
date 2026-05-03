@@ -1,7 +1,8 @@
 import type { BuildItem } from "@/lib/game-data";
-import { Clock, X, Zap, AlertTriangle } from "lucide-react";
+import { Clock, X, Zap, AlertTriangle, ArrowUp } from "lucide-react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { useResources } from "@/lib/resources-store";
+import { themeFor, themeMap } from "@/lib/card-themes";
 import { toast } from "sonner";
 
 const fmt = (n: number) => n.toLocaleString("pt-BR");
@@ -24,8 +25,8 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   const Icon = item.icon;
   useQueue();
   const resources = useResources();
+  const t = themeMap[themeFor(item.id)];
 
-  // active queue entry for this item
   const active = queueStore.activeFor(kind, item.id);
   const progress = active ? progressOf(active) : null;
 
@@ -36,7 +37,6 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
     deuterium: !!cost.deuterium && resources.deuterium < cost.deuterium,
   };
   const canAfford = !lacking.metal && !lacking.crystal && !lacking.deuterium;
-  const blocked = !!active;
 
   const handleBuild = () => {
     const r = queueStore.startBuild({
@@ -58,27 +58,29 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   };
 
   return (
-    <div className={`panel rounded-md transition-all relative overflow-hidden group ${blocked ? "" : "panel-glow"}`}>
-      {/* level ribbon */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary/40 to-accent/40" />
+    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `ring-1 ring-${t.text.replace("text-", "")}/30 shadow-lg ${t.glow}` : ""}`}>
+      {/* themed top accent */}
+      <div className={`h-1 w-full bg-gradient-to-r ${t.ring}`} />
 
-      <div className="p-4">
+      {/* themed glow orb */}
+      <div className={`absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-radial ${t.ring} opacity-40 blur-2xl pointer-events-none`} />
+
+      <div className="p-4 relative">
         <div className="flex items-start gap-3 mb-3">
           <div className="relative shrink-0">
-            <div className="w-14 h-14 rounded bg-surface-elevated border border-border flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-              <Icon className="w-7 h-7 text-primary relative z-10" strokeWidth={1.6} />
+            <div className={`w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow}`}>
+              <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-background border border-primary/60 text-primary text-[10px] font-mono font-bold px-1.5 h-5 min-w-[24px] rounded flex items-center justify-center">
+            <span className="absolute -bottom-1 -right-1 bg-background border border-border text-foreground text-[10px] font-mono font-bold px-1.5 h-5 min-w-[28px] rounded flex items-center justify-center">
               Lv {item.level}
-            </div>
+            </span>
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display text-sm font-semibold tracking-wider text-foreground uppercase truncate">{item.name}</h3>
+            <h3 className="font-display text-sm font-bold tracking-wider uppercase truncate">{item.name}</h3>
             <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-snug">{item.description}</p>
             {item.production && (
-              <div className="text-[10px] font-mono text-accent mt-1 uppercase tracking-wider flex items-center gap-1">
+              <div className={`text-[10px] font-mono ${t.text} mt-1 uppercase tracking-wider flex items-center gap-1`}>
                 <Zap className="w-2.5 h-2.5" /> {item.production}
               </div>
             )}
@@ -94,7 +96,7 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
         {progress ? (
           <div>
             <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider mb-1.5">
-              <span className="text-accent flex items-center gap-1">
+              <span className={`${t.text} flex items-center gap-1`}>
                 <Clock className="w-3 h-3" /> Lv {item.level} → {(active!.level ?? item.level + 1)}
               </span>
               <div className="flex items-center gap-2">
@@ -105,7 +107,7 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
               </div>
             </div>
             <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden relative">
-              <div className="h-full bg-gradient-to-r from-primary to-accent shimmer" style={{ width: `${progress.pct}%` }} />
+              <div className={`h-full ${t.dot} shimmer`} style={{ width: `${progress.pct}%` }} />
             </div>
           </div>
         ) : (
@@ -117,10 +119,15 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
             <button
               disabled={!canAfford}
               onClick={handleBuild}
-              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 disabled:bg-surface-elevated disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground text-xs font-display font-semibold uppercase tracking-wider rounded transition-all hover:shadow-[0_0_16px_-4px_var(--primary)] flex items-center gap-1"
+              className={`px-3.5 h-9 font-display tracking-wider uppercase text-[11px] rounded transition-all flex items-center gap-1.5 ${
+                canAfford
+                  ? `${t.dot} text-background hover:opacity-90 shadow-md ${t.glow}`
+                  : "bg-surface-elevated text-muted-foreground cursor-not-allowed border border-border"
+              }`}
             >
               {!canAfford && <AlertTriangle className="w-3 h-3" />}
-              {actionLabel} →
+              {canAfford && <ArrowUp className="w-3 h-3" />}
+              {actionLabel}
             </button>
           </div>
         )}
