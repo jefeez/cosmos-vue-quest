@@ -250,7 +250,8 @@ function GalaxyPage() {
             Nenhum slot corresponde ao filtro
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="mt-4 panel rounded-md p-3 flex flex-wrap gap-4 text-[10px] font-mono text-muted-foreground">
