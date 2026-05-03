@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Globe2, Search, Crosshair, Eye, Send, ChevronLeft, ChevronRight, Star, Recycle, Filter, Moon } from "lucide-react";
+import { Globe2, Search, Crosshair, Eye, Send, ChevronLeft, ChevronRight, Star, Recycle, Filter, Moon, Orbit, List } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { useMemo, useState } from "react";
 import { generateSystem, statusMeta, type PlanetSlot, type PlayerStatus } from "@/lib/galaxy-data";
 import { GalaxySlotDetail } from "@/components/GalaxySlotDetail";
 import { FleetDispatchDialog } from "@/components/FleetDispatchDialog";
+import { SystemOrbitView } from "@/components/SystemOrbitView";
 import type { MissionType } from "@/lib/fleet-store";
 
 export const Route = createFileRoute("/galaxy")({
