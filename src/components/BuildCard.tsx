@@ -58,7 +58,7 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   };
 
   return (
-    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `ring-1 ring-${t.text.replace("text-", "")}/30 shadow-lg ${t.glow}` : ""}`}>
+    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `shadow-lg ${t.glow}` : ""}`}>
       {/* themed top accent */}
       <div className={`h-1 w-full bg-gradient-to-r ${t.ring}`} />
 
