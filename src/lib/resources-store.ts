@@ -16,18 +16,23 @@ let state: Resources = { ...initialResources };
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
-setInterval(() => {
-  state = {
-    metal: Math.min(capacity.metal, state.metal + productionPerHour.metal / 3600),
-    crystal: Math.min(capacity.crystal, state.crystal + productionPerHour.crystal / 3600),
-    deuterium: Math.min(capacity.deuterium, state.deuterium + productionPerHour.deuterium / 3600),
-    energy: energy.produced - energy.consumed,
-  };
-  emit();
-}, 1000);
+if (typeof window !== "undefined") {
+  setInterval(() => {
+    state = {
+      metal: Math.min(capacity.metal, state.metal + productionPerHour.metal / 3600),
+      crystal: Math.min(capacity.crystal, state.crystal + productionPerHour.crystal / 3600),
+      deuterium: Math.min(capacity.deuterium, state.deuterium + productionPerHour.deuterium / 3600),
+      energy: energy.produced - energy.consumed,
+    };
+    emit();
+  }, 1000);
+}
+
+const serverSnapshot: Resources = { ...initialResources, energy: energy.produced - energy.consumed };
 
 export const resourcesStore = {
   get: () => state,
+  getServer: () => serverSnapshot,
   subscribe: (l: () => void) => { listeners.add(l); return () => { listeners.delete(l); }; },
   spend(cost: { metal?: number; crystal?: number; deuterium?: number }) {
     state = {
@@ -46,5 +51,5 @@ export const resourcesStore = {
 };
 
 export function useResources() {
-  return useSyncExternalStore(resourcesStore.subscribe, resourcesStore.get, resourcesStore.get);
+  return useSyncExternalStore(resourcesStore.subscribe, resourcesStore.get, resourcesStore.getServer);
 }
