@@ -1,4 +1,5 @@
 import { Clock, X, Building2, Wrench, FlaskConical, Rocket, Shield, Sparkles, Inbox } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { themeMap, themeFor } from "@/lib/card-themes";
 import { toast } from "sonner";
