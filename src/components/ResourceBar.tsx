@@ -1,7 +1,10 @@
 import { Pickaxe, Gem, Droplet, Zap, MapPin, TrendingUp, AlertTriangle, Bell } from "lucide-react";
+import { useState } from "react";
 import { useResources, capacity, energy } from "@/lib/resources-store";
 import { productionPerHour } from "@/lib/game-data";
 import { useLocation } from "@/lib/location-store";
+import { useReports } from "@/lib/reports-store";
+import { ReportsDialog } from "./ReportsDialog";
 
 const formatNumber = (n: number) => {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + "M";
@@ -102,11 +105,16 @@ const ResourceItem = ({ icon: Icon, label, value, colorVar, prod, cap }: Resourc
 export function ResourceBar() {
   const resources = useResources();
   const { planet, kind } = useLocation();
+  const { reports } = useReports();
+  const unread = reports.filter((r) => !r.read).length;
+  const [reportsOpen, setReportsOpen] = useState(false);
   const energyBalance = resources.energy;
   const energyDeficit = energyBalance < 0;
   const energyPct = Math.min(100, (energy.consumed / energy.produced) * 100);
 
   return (
+    <>
+    <ReportsDialog open={reportsOpen} onClose={() => setReportsOpen(false)} />
     <div className="bg-surface/85 backdrop-blur-md border-b border-border sticky top-0 z-30">
       <div className="flex items-stretch">
         <ResourceItem icon={Pickaxe} label="Metal"    value={resources.metal}     colorVar="--metal"     prod={productionPerHour.metal}     cap={capacity.metal} />
@@ -169,11 +177,16 @@ export function ResourceBar() {
         <div className="flex items-center gap-2 px-3.5 shrink-0">
           {/* Notifications */}
           <button
+            onClick={() => setReportsOpen(true)}
             className="relative w-9 h-9 rounded-md border border-border bg-background/40 hover:bg-surface-elevated text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center"
-            title="Notificações"
+            title="Relatórios"
           >
             <Bell className="w-4 h-4" strokeWidth={1.8} />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
+            {unread > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-destructive-foreground text-[9px] font-mono font-bold flex items-center justify-center border border-surface">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
           </button>
 
           {/* Location chip */}
@@ -193,5 +206,6 @@ export function ResourceBar() {
         </div>
       </div>
     </div>
+    </>
   );
 }
