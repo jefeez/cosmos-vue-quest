@@ -1,4 +1,5 @@
 import { Clock, X, Building2, Wrench, FlaskConical, Rocket, Shield, Sparkles, Inbox } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { themeMap, themeFor } from "@/lib/card-themes";
 import { toast } from "sonner";
@@ -21,6 +22,8 @@ export function QueuePanel({
   emptyHint?: string;
 }) {
   useQueue();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const all = queueStore.get();
   const filterSet = filter ? new Set(Array.isArray(filter) ? filter : [filter]) : null;
   const entries = filterSet ? all.filter((e) => filterSet.has(e.kind)) : all;
@@ -51,7 +54,7 @@ export function QueuePanel({
             {title}
           </h3>
           <div className="flex items-center gap-2">
-            {entries.length > 0 && (
+            {entries.length > 0 && mounted && (
               <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
                 ETA {fmtTotal(totalRemaining)}
               </span>

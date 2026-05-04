@@ -2,10 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Plane, Send, RotateCcw, Shield, Crosshair, Eye, Compass, Bomb,
-  Anchor, Sparkles, Plus, X, ChevronRight, History,
+  Anchor, Sparkles, Plus, X, ChevronRight, History, Swords,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { FleetDispatchDialog } from "@/components/FleetDispatchDialog";
+import { BattleSimulator } from "@/components/BattleSimulator";
 import { useFleet, fleetStore, formatCountdown, missionProgress, type Mission, type MissionType } from "@/lib/fleet-store";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ function FleetPage() {
   const { missions } = useFleet();
   const [tab, setTab] = useState<"active" | "returning" | "stationed" | "history">("active");
   const [dispatchOpen, setDispatchOpen] = useState(false);
+  const [simOpen, setSimOpen] = useState(false);
   const [, force] = useState(0);
 
   // tick every second for countdowns
@@ -81,12 +83,20 @@ function FleetPage() {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => setDispatchOpen(true)}
-              className="px-3 py-1.5 bg-primary text-primary-foreground rounded font-display uppercase tracking-wider text-[10px] font-semibold hover:shadow-[0_0_16px_-4px_var(--primary)] flex items-center gap-1"
-            >
-              <Plus className="w-3 h-3" /> Nova missão
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSimOpen(true)}
+                className="px-3 py-1.5 border border-destructive/40 text-destructive rounded font-display uppercase tracking-wider text-[10px] font-semibold hover:bg-destructive/10 flex items-center gap-1"
+              >
+                <Swords className="w-3 h-3" /> Simular
+              </button>
+              <button
+                onClick={() => setDispatchOpen(true)}
+                className="px-3 py-1.5 bg-primary text-primary-foreground rounded font-display uppercase tracking-wider text-[10px] font-semibold hover:shadow-[0_0_16px_-4px_var(--primary)] flex items-center gap-1"
+              >
+                <Plus className="w-3 h-3" /> Nova missão
+              </button>
+            </div>
           </div>
 
           <div className="p-5 space-y-3">
@@ -153,6 +163,7 @@ function FleetPage() {
       </div>
 
       <FleetDispatchDialog open={dispatchOpen} onClose={() => setDispatchOpen(false)} />
+      <BattleSimulator open={simOpen} onClose={() => setSimOpen(false)} />
     </div>
   );
 }
