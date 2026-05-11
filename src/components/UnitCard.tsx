@@ -21,8 +21,10 @@ export function UnitCard({ item, kind = "ship" }: Props) {
   const resources = useResources();
   const t = themeMap[themeFor(item.id)];
   const locked = !!item.locked;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const active = queueStore.activeFor(kind, item.id);
+  const active = mounted ? queueStore.activeFor(kind, item.id) : null;
   const progress = active ? progressOf(active) : null;
 
   const totalCost = {
