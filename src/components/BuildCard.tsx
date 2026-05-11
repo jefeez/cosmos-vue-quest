@@ -1,4 +1,5 @@
 import type { BuildItem } from "@/lib/game-data";
+import { useEffect, useState } from "react";
 import { Clock, X, Zap, AlertTriangle, ArrowUp, Lock, Sparkles, GitBranch, Battery, Flame } from "lucide-react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { useResources } from "@/lib/resources-store";
