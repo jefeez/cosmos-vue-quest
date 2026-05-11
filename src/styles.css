@@ -116,18 +116,20 @@
     font-family: "Inter", -apple-system, system-ui, sans-serif;
   }
 
-  /* Subtle industrial texture background */
+  /* Cosmic nebula + starfield background */
   body {
+    background-color: oklch(0.10 0.04 280);
     background-image:
-      radial-gradient(circle at 20% 10%, oklch(0.25 0.02 50 / 0.3) 0%, transparent 40%),
-      radial-gradient(circle at 80% 90%, oklch(0.22 0.03 30 / 0.25) 0%, transparent 40%),
-      repeating-linear-gradient(
-        0deg,
-        transparent 0,
-        transparent 2px,
-        oklch(1 0 0 / 0.005) 2px,
-        oklch(1 0 0 / 0.005) 4px
-      );
+      radial-gradient(ellipse at 15% 10%, oklch(0.45 0.25 290 / 0.30) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 20%, oklch(0.50 0.22 200 / 0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 90%, oklch(0.50 0.22 330 / 0.22) 0%, transparent 55%),
+      radial-gradient(circle at 22% 35%, oklch(1 0 0 / 0.7) 0, oklch(1 0 0 / 0.7) 0.5px, transparent 1px),
+      radial-gradient(circle at 78% 62%, oklch(1 0 0 / 0.6) 0, oklch(1 0 0 / 0.6) 0.5px, transparent 1px),
+      radial-gradient(circle at 45% 80%, oklch(1 0 0 / 0.5) 0, oklch(1 0 0 / 0.5) 0.5px, transparent 1px),
+      radial-gradient(circle at 60% 15%, oklch(1 0 0 / 0.55) 0, oklch(1 0 0 / 0.55) 0.5px, transparent 1px),
+      radial-gradient(circle at 10% 70%, oklch(1 0 0 / 0.5) 0, oklch(1 0 0 / 0.5) 0.5px, transparent 1px),
+      linear-gradient(180deg, oklch(0.11 0.045 280) 0%, oklch(0.09 0.04 290) 100%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4 {
