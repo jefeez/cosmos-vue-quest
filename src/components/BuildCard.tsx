@@ -28,8 +28,10 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   useQueue();
   const resources = useResources();
   const t = themeMap[themeFor(item.id)];
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const active = queueStore.activeFor(kind, item.id);
+  const active = mounted ? queueStore.activeFor(kind, item.id) : null;
   const progress = active ? progressOf(active) : null;
   const locked = !!item.locked;
 
