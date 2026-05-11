@@ -1,5 +1,5 @@
 import type { UnitItem } from "@/lib/game-data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Swords, Shield, Gauge, Plus, Minus, AlertTriangle, Clock, Hammer, Lock, Zap, GitBranch } from "lucide-react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { useResources } from "@/lib/resources-store";
