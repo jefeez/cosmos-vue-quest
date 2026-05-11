@@ -71,8 +71,11 @@ export function UnitCard({ item, kind = "ship" }: Props) {
 
       <div className="p-4 relative">
         <div className="flex items-start gap-3 mb-3">
-          <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shrink-0 shadow-lg ${t.glow}`}>
-            <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
+          <div className="relative shrink-0">
+            <div className={`absolute inset-0 rounded-full ${t.dot} blur-md opacity-60 group-hover:opacity-90 transition-opacity`} />
+            <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow} group-hover:scale-105 transition-transform duration-300`}>
+              <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
+            </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline justify-between gap-2">
