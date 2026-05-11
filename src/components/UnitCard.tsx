@@ -54,9 +54,9 @@ export function UnitCard({ item, kind = "ship" }: Props) {
   };
 
   return (
-    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `shadow-lg ${t.glow}` : ""} ${locked ? "opacity-90" : ""}`}>
-      <div className={`h-1 w-full bg-gradient-to-r ${t.ring}`} />
-      <div className={`absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-radial ${t.ring} opacity-40 blur-2xl pointer-events-none`} />
+    <div className={`group relative panel shine rise-in rounded-xl overflow-hidden transition-all hover:-translate-y-1 ${t.border} ${progress ? `shadow-xl ${t.glow}` : ""} ${locked ? "opacity-95" : ""}`}>
+      <div className={`h-[2px] w-full bg-gradient-to-r ${t.ring}`} />
+      <div className={`absolute -top-20 -right-20 w-56 h-56 rounded-full bg-gradient-radial ${t.ring} opacity-50 blur-3xl pointer-events-none group-hover:opacity-80 transition-opacity duration-500`} />
 
       {locked && (
         <div className="absolute inset-0 z-10 bg-background/55 backdrop-blur-[2px] flex items-center justify-center pointer-events-none">
