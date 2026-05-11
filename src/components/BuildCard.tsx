@@ -78,10 +78,11 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
       <div className="p-4 relative">
         <div className="flex items-start gap-3 mb-3">
           <div className="relative shrink-0">
-            <div className={`w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow}`}>
+            <div className={`absolute inset-0 rounded-full ${t.dot} blur-md opacity-60 group-hover:opacity-90 transition-opacity`} />
+            <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow} group-hover:scale-105 transition-transform duration-300`}>
               <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
             </div>
-            <span className="absolute -bottom-1 -right-1 bg-background border border-border text-foreground text-[10px] font-mono font-bold px-1.5 h-5 min-w-[28px] rounded flex items-center justify-center">
+            <span className="absolute -bottom-1 -right-1 bg-background border border-border text-foreground text-[10px] font-mono font-bold px-1.5 h-5 min-w-[28px] rounded flex items-center justify-center shadow-md">
               Lv {item.level}
             </span>
           </div>
