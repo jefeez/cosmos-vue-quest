@@ -38,56 +38,71 @@
   --color-danger: var(--danger);
   --font-display: "Orbitron", sans-serif;
   --font-mono: "JetBrains Mono", "Roboto Mono", monospace;
-  --shadow-glow: 0 0 24px -4px var(--primary);
-  --shadow-panel: inset 0 1px 0 0 oklch(1 0 0 / 0.04), 0 4px 20px -8px oklch(0 0 0 / 0.6);
-  --gradient-panel: linear-gradient(180deg, oklch(0.22 0.01 60) 0%, oklch(0.18 0.008 60) 100%);
-  --gradient-primary: linear-gradient(135deg, oklch(0.7 0.18 50) 0%, oklch(0.6 0.16 45) 100%);
+  --shadow-glow: 0 0 28px -2px color-mix(in oklab, var(--primary) 70%, transparent);
+  --shadow-panel:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.05),
+    inset 0 0 24px -12px color-mix(in oklab, var(--primary) 40%, transparent),
+    0 8px 32px -12px oklch(0 0 0 / 0.7);
+  --gradient-panel: linear-gradient(160deg,
+    oklch(0.22 0.05 270) 0%,
+    oklch(0.17 0.04 280) 60%,
+    oklch(0.15 0.05 290) 100%);
+  --gradient-primary: linear-gradient(135deg,
+    oklch(0.78 0.18 200) 0%,
+    oklch(0.65 0.22 290) 100%);
+  --gradient-nebula: radial-gradient(ellipse at 30% 20%,
+      oklch(0.45 0.22 290 / 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%,
+      oklch(0.55 0.20 200 / 0.30) 0%, transparent 55%),
+    radial-gradient(ellipse at 60% 100%,
+      oklch(0.50 0.22 340 / 0.25) 0%, transparent 60%);
 }
 
 :root {
   --radius: 0.5rem;
 
-  /* Industrial dark palette */
-  --background: oklch(0.16 0.005 60);
-  --foreground: oklch(0.96 0.005 60);
+  /* Deep space sci-fi palette */
+  --background: oklch(0.13 0.04 275);
+  --foreground: oklch(0.96 0.02 240);
 
-  --surface: oklch(0.21 0.008 60);
-  --surface-elevated: oklch(0.25 0.01 60);
+  --surface: oklch(0.18 0.05 275);
+  --surface-elevated: oklch(0.23 0.06 275);
 
-  --card: oklch(0.21 0.008 60);
-  --card-foreground: oklch(0.96 0.005 60);
+  --card: oklch(0.19 0.05 275);
+  --card-foreground: oklch(0.96 0.02 240);
 
-  --popover: oklch(0.21 0.008 60);
-  --popover-foreground: oklch(0.96 0.005 60);
+  --popover: oklch(0.19 0.05 275);
+  --popover-foreground: oklch(0.96 0.02 240);
 
-  /* Rusted amber primary */
-  --primary: oklch(0.68 0.16 50);
-  --primary-foreground: oklch(0.16 0.005 60);
+  /* Plasma cyan primary */
+  --primary: oklch(0.78 0.18 200);
+  --primary-foreground: oklch(0.12 0.04 275);
 
-  --secondary: oklch(0.28 0.008 60);
-  --secondary-foreground: oklch(0.96 0.005 60);
+  --secondary: oklch(0.28 0.07 280);
+  --secondary-foreground: oklch(0.96 0.02 240);
 
-  --muted: oklch(0.25 0.008 60);
-  --muted-foreground: oklch(0.7 0.01 60);
+  --muted: oklch(0.25 0.05 280);
+  --muted-foreground: oklch(0.72 0.05 250);
 
-  --accent: oklch(0.85 0.17 95);
-  --accent-foreground: oklch(0.16 0.005 60);
+  /* Magenta nebula accent */
+  --accent: oklch(0.72 0.22 320);
+  --accent-foreground: oklch(0.12 0.04 275);
 
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0.005 60);
+  --destructive: oklch(0.62 0.25 15);
+  --destructive-foreground: oklch(0.98 0.01 240);
 
-  --border: oklch(0.3 0.008 60);
-  --input: oklch(0.3 0.008 60);
-  --ring: oklch(0.68 0.16 50);
+  --border: oklch(0.32 0.06 275);
+  --input: oklch(0.30 0.06 275);
+  --ring: oklch(0.78 0.18 200);
 
-  /* Resource colors */
-  --metal: oklch(0.72 0.02 60);
-  --crystal: oklch(0.75 0.15 220);
-  --deuterium: oklch(0.7 0.18 160);
-  --energy: oklch(0.85 0.17 95);
+  /* Resource colors — galactic */
+  --metal: oklch(0.78 0.04 250);
+  --crystal: oklch(0.78 0.18 220);
+  --deuterium: oklch(0.78 0.18 165);
+  --energy: oklch(0.85 0.18 90);
 
-  --warning: oklch(0.78 0.18 75);
-  --danger: oklch(0.6 0.22 25);
+  --warning: oklch(0.80 0.18 75);
+  --danger: oklch(0.65 0.24 15);
 }
 
 @layer base {
@@ -101,18 +116,20 @@
     font-family: "Inter", -apple-system, system-ui, sans-serif;
   }
 
-  /* Subtle industrial texture background */
+  /* Cosmic nebula + starfield background */
   body {
+    background-color: oklch(0.10 0.04 280);
     background-image:
-      radial-gradient(circle at 20% 10%, oklch(0.25 0.02 50 / 0.3) 0%, transparent 40%),
-      radial-gradient(circle at 80% 90%, oklch(0.22 0.03 30 / 0.25) 0%, transparent 40%),
-      repeating-linear-gradient(
-        0deg,
-        transparent 0,
-        transparent 2px,
-        oklch(1 0 0 / 0.005) 2px,
-        oklch(1 0 0 / 0.005) 4px
-      );
+      radial-gradient(ellipse at 15% 10%, oklch(0.45 0.25 290 / 0.30) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 20%, oklch(0.50 0.22 200 / 0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 90%, oklch(0.50 0.22 330 / 0.22) 0%, transparent 55%),
+      radial-gradient(circle at 22% 35%, oklch(1 0 0 / 0.7) 0, oklch(1 0 0 / 0.7) 0.5px, transparent 1px),
+      radial-gradient(circle at 78% 62%, oklch(1 0 0 / 0.6) 0, oklch(1 0 0 / 0.6) 0.5px, transparent 1px),
+      radial-gradient(circle at 45% 80%, oklch(1 0 0 / 0.5) 0, oklch(1 0 0 / 0.5) 0.5px, transparent 1px),
+      radial-gradient(circle at 60% 15%, oklch(1 0 0 / 0.55) 0, oklch(1 0 0 / 0.55) 0.5px, transparent 1px),
+      radial-gradient(circle at 10% 70%, oklch(1 0 0 / 0.5) 0, oklch(1 0 0 / 0.5) 0.5px, transparent 1px),
+      linear-gradient(180deg, oklch(0.11 0.045 280) 0%, oklch(0.09 0.04 290) 100%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4 {
@@ -167,8 +184,8 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 oklch(0.68 0.16 50 / 0.4); }
-    50% { box-shadow: 0 0 0 8px oklch(0.68 0.16 50 / 0); }
+    0%, 100% { box-shadow: 0 0 0 0 oklch(0.78 0.18 200 / 0.55); }
+    50% { box-shadow: 0 0 0 10px oklch(0.78 0.18 200 / 0); }
   }
 
   .pulse-glow {
