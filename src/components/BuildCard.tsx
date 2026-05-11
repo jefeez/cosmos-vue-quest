@@ -1,4 +1,5 @@
 import type { BuildItem } from "@/lib/game-data";
+import { useEffect, useState } from "react";
 import { Clock, X, Zap, AlertTriangle, ArrowUp, Lock, Sparkles, GitBranch, Battery, Flame } from "lucide-react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { useResources } from "@/lib/resources-store";
@@ -27,8 +28,10 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   useQueue();
   const resources = useResources();
   const t = themeMap[themeFor(item.id)];
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const active = queueStore.activeFor(kind, item.id);
+  const active = mounted ? queueStore.activeFor(kind, item.id) : null;
   const progress = active ? progressOf(active) : null;
   const locked = !!item.locked;
 
@@ -57,9 +60,9 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
   };
 
   return (
-    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `shadow-lg ${t.glow}` : ""} ${locked ? "opacity-90" : ""}`}>
-      <div className={`h-1 w-full bg-gradient-to-r ${t.ring}`} />
-      <div className={`absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-radial ${t.ring} opacity-40 blur-2xl pointer-events-none`} />
+    <div className={`group relative panel shine rise-in rounded-xl overflow-hidden transition-all hover:-translate-y-1 ${t.border} ${progress ? `shadow-xl ${t.glow}` : ""} ${locked ? "opacity-95" : ""}`}>
+      <div className={`h-[2px] w-full bg-gradient-to-r ${t.ring}`} />
+      <div className={`absolute -top-20 -right-20 w-56 h-56 rounded-full bg-gradient-radial ${t.ring} opacity-50 blur-3xl pointer-events-none group-hover:opacity-80 transition-opacity duration-500`} />
 
       {locked && (
         <div className="absolute inset-0 z-10 bg-background/55 backdrop-blur-[2px] flex items-center justify-center pointer-events-none">
@@ -75,10 +78,11 @@ export function BuildCard({ item, kind = "building", actionLabel = "Melhorar" }:
       <div className="p-4 relative">
         <div className="flex items-start gap-3 mb-3">
           <div className="relative shrink-0">
-            <div className={`w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow}`}>
+            <div className={`absolute inset-0 rounded-full ${t.dot} blur-md opacity-60 group-hover:opacity-90 transition-opacity`} />
+            <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow} group-hover:scale-105 transition-transform duration-300`}>
               <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
             </div>
-            <span className="absolute -bottom-1 -right-1 bg-background border border-border text-foreground text-[10px] font-mono font-bold px-1.5 h-5 min-w-[28px] rounded flex items-center justify-center">
+            <span className="absolute -bottom-1 -right-1 bg-background border border-border text-foreground text-[10px] font-mono font-bold px-1.5 h-5 min-w-[28px] rounded flex items-center justify-center shadow-md">
               Lv {item.level}
             </span>
           </div>

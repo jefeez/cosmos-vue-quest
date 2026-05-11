@@ -1,5 +1,5 @@
 import type { UnitItem } from "@/lib/game-data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Swords, Shield, Gauge, Plus, Minus, AlertTriangle, Clock, Hammer, Lock, Zap, GitBranch } from "lucide-react";
 import { useQueue, queueStore, progressOf, type QueueKind } from "@/lib/build-queue-store";
 import { useResources } from "@/lib/resources-store";
@@ -21,8 +21,10 @@ export function UnitCard({ item, kind = "ship" }: Props) {
   const resources = useResources();
   const t = themeMap[themeFor(item.id)];
   const locked = !!item.locked;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const active = queueStore.activeFor(kind, item.id);
+  const active = mounted ? queueStore.activeFor(kind, item.id) : null;
   const progress = active ? progressOf(active) : null;
 
   const totalCost = {
@@ -52,9 +54,9 @@ export function UnitCard({ item, kind = "ship" }: Props) {
   };
 
   return (
-    <div className={`group relative panel rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 ${t.border} ${progress ? `shadow-lg ${t.glow}` : ""} ${locked ? "opacity-90" : ""}`}>
-      <div className={`h-1 w-full bg-gradient-to-r ${t.ring}`} />
-      <div className={`absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-radial ${t.ring} opacity-40 blur-2xl pointer-events-none`} />
+    <div className={`group relative panel shine rise-in rounded-xl overflow-hidden transition-all hover:-translate-y-1 ${t.border} ${progress ? `shadow-xl ${t.glow}` : ""} ${locked ? "opacity-95" : ""}`}>
+      <div className={`h-[2px] w-full bg-gradient-to-r ${t.ring}`} />
+      <div className={`absolute -top-20 -right-20 w-56 h-56 rounded-full bg-gradient-radial ${t.ring} opacity-50 blur-3xl pointer-events-none group-hover:opacity-80 transition-opacity duration-500`} />
 
       {locked && (
         <div className="absolute inset-0 z-10 bg-background/55 backdrop-blur-[2px] flex items-center justify-center pointer-events-none">
@@ -69,8 +71,11 @@ export function UnitCard({ item, kind = "ship" }: Props) {
 
       <div className="p-4 relative">
         <div className="flex items-start gap-3 mb-3">
-          <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shrink-0 shadow-lg ${t.glow}`}>
-            <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
+          <div className="relative shrink-0">
+            <div className={`absolute inset-0 rounded-full ${t.dot} blur-md opacity-60 group-hover:opacity-90 transition-opacity`} />
+            <div className={`relative w-12 h-12 rounded-full ${t.dot} flex items-center justify-center shadow-lg ${t.glow} group-hover:scale-105 transition-transform duration-300`}>
+              <Icon className="w-6 h-6 text-background" strokeWidth={1.8} />
+            </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline justify-between gap-2">
